@@ -7,7 +7,7 @@ esphome:
     version: 1.0.0
 
 logger:
-  level: DEBUG
+  level: INFO
 
 mdns:
 
@@ -98,6 +98,12 @@ number:
       mode: box
 
 sensor:
+  - platform: uptime
+    name: Uptime
+  - platform: wifi_signal
+    name: WiFi Signal
+    update_interval: 60s
+
   - platform: hdxps
     device_id: hdxps0
     temperature:

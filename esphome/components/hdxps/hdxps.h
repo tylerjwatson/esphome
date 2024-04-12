@@ -33,6 +33,14 @@ enum HDPSControlMode {
   HDPS_CONTROL_MODE_QUERY = 2,
 };
 
+enum HDPSPowerMode {
+  HDPS_POWER_MODE_LOCAL_POWER_OFF = 0,
+  HDPS_POWER_MODE_LOCAL_POWER_ON = 1,
+  HDPS_POWER_MODE_REMOTE_POWER_OFF = 2,
+  HDPS_POWER_MODE_REMOTE_POWER_ON = 3,
+
+};
+
 class HDPSDevice : public uart::UARTDevice, public PollingComponent {
  public:
   void setup() override;

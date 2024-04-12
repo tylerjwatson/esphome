@@ -32,13 +32,20 @@ void HDPSDevice::setup() {
   if (initial_remote) {
     this->set_control(true);
   }
-
 }
 
 void HDPSDevice::update() {
   // This is the update function that will be called by the framework
   // when the component should update.
-  ESP_LOGD(TAG, "HDPSDevice::update");
+  ESP_LOGI(TAG, "HDPSDevice::update: refreshing device");
+
+  auto power_response = [=](auto result, const auto &data) {
+    auto int_val = std::strtol(data.c_str(), nullptr, 10);
+    auto enabled = int_val == HDPS_POWER_MODE_LOCAL_POWER_ON || int_val == HDPS_POWER_MODE_REMOTE_POWER_ON;
+    this->output_enabled_switch_->publish_state(enabled);
+
+    ESP_LOGI(TAG, "HDPSDevice::update: finished.");
+  };
 
   auto rv_response = [=](auto result, const auto &data) {
     auto val = std::strtof(data.c_str(), nullptr);
@@ -46,6 +53,8 @@ void HDPSDevice::update() {
     if (this->output_voltage_sensor_) {
       this->output_voltage_sensor_->publish_state(val);
     }
+
+    this->send_command("POWER 2", power_response);
   };
 
   auto ri_response = [=](auto result, const auto &data) {
