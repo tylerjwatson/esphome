@@ -13,12 +13,19 @@ mdns:
 
 ota:
 
+mqtt:
+  broker: 10.0.0.5
+  reboot_timeout: 0s
+
+api:
+
 web_server:
   port: 80
 
 wifi:
   ssid: IoT
   password: Int3rnets
+  fast_connect: true
 
 esp8266:
   board: esp8285
@@ -32,6 +39,7 @@ uart:
   data_bits: 8
   stop_bits: 1
   parity: NONE
+  
   # debug:
   #   direction: BOTH
   #   after:
@@ -42,8 +50,6 @@ uart:
 hdxps:
   id: hdxps0
   uart_id: test
-  voltage: 55.2
-  current: 0
   output_enabled: false
   update_interval: 10s
 
@@ -51,5 +57,58 @@ hdxps:
 text_sensor:
   - platform: hdxps
     device_id: hdxps0
-    serial:
-      name: 'SMPS Serial'
+    identity:
+      name: 'SMPS Identity'
+
+binary_sensor:
+  - platform: hdxps
+    device_id: hdxps0
+    otp_shutdown:
+      name: 'OTP Shutdown'
+    ovp_shutdown:
+      name: 'OVP Shutdown'
+    olp_shutdown:
+      name: 'OLP Shutdown'
+    high_temp_alarm:
+      name: 'High Temperature Alarm'
+    fan_failure:
+      name: 'Fan Failure'
+
+switch:
+  - platform: gpio
+    pin: GPIO5
+    name: MeanWell Output Enabled
+
+  - platform: hdxps
+    device_id: hdxps0
+    control:
+      name: Remote Control Mode
+      restore_mode: RESTORE_DEFAULT_ON
+    output_enabled:
+      name: Output Enabled
+
+number:
+  - platform: hdxps
+    device_id: hdxps0
+    voltage:
+      name: 'Target Voltage'
+      mode: box
+    current:
+      name: 'Target Current'
+      mode: box
+
+sensor:
+  - platform: hdxps
+    device_id: hdxps0
+    temperature:
+      name: 'Temperature'
+    rated_voltage:
+      name: 'Rated Voltage'
+    rated_current:
+      name: 'Rated Current'
+
+    output_voltage:
+      name: 'Output Voltage'
+    output_current:
+      name: 'Output Current'
+

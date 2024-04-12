@@ -11,7 +11,7 @@ CODEOWNERS = ["@tylerjwatson"]
 CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID("device_id"): cv.use_id(HDPSDevice),
-        cv.Optional("serial"): text_sensor.text_sensor_schema(
+        cv.Optional("identity"): text_sensor.text_sensor_schema(
             icon="mdi:signal",
         ),
     }
@@ -21,5 +21,5 @@ CONFIG_SCHEMA = cv.Schema(
 async def to_code(config):
     device = await cg.get_variable(config["device_id"])
 
-    if conf := config.get("serial"):
-        cg.add(device.set_serial_sensor(await text_sensor.new_text_sensor(conf)))
+    if conf := config.get("identity"):
+        cg.add(device.set_identity_sensor(await text_sensor.new_text_sensor(conf)))

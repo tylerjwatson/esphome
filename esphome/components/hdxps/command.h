@@ -2,30 +2,39 @@
 
 #include <functional>
 #include <string>
+#include <Arduino.h>
+
+namespace esphome {
+namespace hdxps {
 
 enum HDPSResult {
   HDPS_RESULT_OK = 0,
   HDPS_RESULT_ERROR = 1,
   HDPS_RESULT_EXECUTION_ERROR = 2,
   HDPS_RESULT_TIMEOUT = 3,
+  HDPS_RESULT_CONTINUE,
 };
 
 class HDPSCommand;
 
-using HDPSCommandResultCallback = std::function<void(const HDPSCommand& command)>;
+using HDPSCommandResultCallback = std::function<void(const HDPSResult result, const std::string &data)>;
 
-class HDPSCommand {
-public:
-  HDPSCommand(const char *command, HDPSCommandResultCallback on_result)
-    : command_(command), on_result_(on_result) {}
+struct HDPSCommand {
+  bool sent_{false};
+  int deadline_{0};
+  std::string command_;
+  std::string data_;
 
+  HDPSCommand(const std::string&& command, HDPSCommandResultCallback on_result)
+      : deadline_(millis() + 450), command_(command), on_result_(on_result) {}
 
-  void append(char *data);
-
+  HDPSResult append(char *data, size_t len);
+  void result(HDPSResult r);
 
  protected:
   HDPSCommandResultCallback on_result_;
-  const char *command_;
-  std::string data_;
-  HDPSResult status_;
+
 };
+
+}  // namespace hdxps
+}  // namespace esphome
